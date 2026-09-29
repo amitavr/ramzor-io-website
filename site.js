@@ -35,15 +35,46 @@ window.matchMedia("(min-width: 901px)").addEventListener("change", closeMenu);
 
 const contactDialog = document.getElementById("contact-dialog");
 const dialogOpeners = new WeakMap();
+const contactPromptKey = "ramzor.io-junction-prompt-seen";
+let contactPromptSeen = false;
+try {
+  contactPromptSeen = sessionStorage.getItem(contactPromptKey) === "true";
+} catch { /* Storage may be unavailable in privacy-restricted browsers. */ }
+
+function markContactPromptSeen() {
+  contactPromptSeen = true;
+  try { sessionStorage.setItem(contactPromptKey, "true"); } catch { /* Keep the in-memory state. */ }
+}
+
+function openContactDialog(opener = menuButton) {
+  if (contactDialog.open || document.querySelector("dialog[open]")) return;
+  markContactPromptSeen();
+  dialogOpeners.set(contactDialog, opener);
+  contactDialog.showModal();
+  document.body.classList.add("modal-open");
+}
+
 document.querySelectorAll("[data-contact]").forEach((link) => {
   link.addEventListener("click", (event) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    dialogOpeners.set(contactDialog, link);
-    contactDialog.showModal();
-    document.body.classList.add("modal-open");
+    openContactDialog(link);
   });
 });
+
+let contactPromptReady = false;
+function considerContactPrompt() {
+  if (!contactPromptReady || contactPromptSeen) return;
+  const scrollableDistance = document.documentElement.scrollHeight - window.innerHeight;
+  if (scrollableDistance <= 0 || window.scrollY / scrollableDistance < .48) return;
+  window.removeEventListener("scroll", considerContactPrompt);
+  openContactDialog();
+}
+window.addEventListener("scroll", considerContactPrompt, { passive: true });
+window.setTimeout(() => {
+  contactPromptReady = true;
+  considerContactPrompt();
+}, 7000);
 
 const privacyButton = document.querySelector("[data-privacy]");
 privacyButton.hidden = false;
@@ -82,9 +113,9 @@ contactForm.addEventListener("submit", (event) => {
   const details = new FormData(contactForm);
   const contactAddress = document.querySelector("[data-contact-email]").getAttribute("href").slice(7);
   const city = String(details.get("city")).trim();
-  const subject = `Ramzor intersection study${city ? `: ${city}` : ""}`;
+  const subject = `ramzor.io intersection study${city ? `: ${city}` : ""}`;
   const message = [
-    "Hello Ramzor team,", "", `Name: ${String(details.get("name")).trim()}`,
+    "Hello ramzor.io team,", "", `Name: ${String(details.get("name")).trim()}`,
     `Email: ${String(details.get("email")).trim()}`, `Organization: ${String(details.get("organization")).trim()}`,
     `City: ${city}`,
     "", "What we want to understand or improve:", String(details.get("message")).trim(),

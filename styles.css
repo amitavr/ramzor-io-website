@@ -217,6 +217,8 @@ input::placeholder, textarea::placeholder { color: #64705f; opacity: 1; font-siz
 .optional { font-weight: 400; color: var(--muted); }
 .form-submit { margin-top: 6px; width: 100%; }
 .form-note { font-size: 11px; line-height: 1.7; color: var(--muted); text-align: center; margin-top: 11px; }
+.form-note.is-error { color: #a43b32; }
+.form-trap { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .contact-ready { padding-block: 27px 8px; text-align: center; }
 .ready-icon { display: grid; place-items: center; width: 54px; height: 54px; margin: 0 auto 20px; background: #eaf3e4; border-radius: 50%; color: var(--green); }
 .contact-ready h3 { font-size: 25px; }

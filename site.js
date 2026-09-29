@@ -107,27 +107,40 @@ document.querySelectorAll("dialog").forEach((dialog) => {
 
 const contactForm = document.getElementById("contact-form");
 const contactReady = document.getElementById("contact-ready");
-contactForm.addEventListener("submit", (event) => {
+const formStatus = document.getElementById("form-status");
+const formSubmit = contactForm.querySelector('[type="submit"]');
+contactForm.elements.namedItem("startedAt").value = String(Date.now());
+contactForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!contactForm.reportValidity()) return;
-  const details = new FormData(contactForm);
-  const contactAddress = document.querySelector("[data-contact-email]").getAttribute("href").slice(7);
-  const city = String(details.get("city")).trim();
-  const subject = `ramzor.io intersection study${city ? `: ${city}` : ""}`;
-  const message = [
-    "Hello ramzor.io team,", "", `Name: ${String(details.get("name")).trim()}`,
-    `Email: ${String(details.get("email")).trim()}`, `Organization: ${String(details.get("organization")).trim()}`,
-    `City: ${city}`,
-    "", "What we want to understand or improve:", String(details.get("message")).trim(),
-  ].join("\r\n");
-  document.getElementById("email-draft").href = `mailto:${contactAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-  contactForm.hidden = true;
-  contactReady.hidden = false;
-  contactReady.querySelector("h3").focus();
+  formSubmit.disabled = true;
+  formStatus.classList.remove("is-error");
+  formStatus.textContent = "Sending your inquiry…";
+  try {
+    const response = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.fromEntries(new FormData(contactForm))),
+    });
+    if (!response.ok) throw new Error("Submission failed");
+    contactForm.reset();
+    contactForm.elements.namedItem("startedAt").value = String(Date.now());
+    contactForm.hidden = true;
+    contactReady.hidden = false;
+    contactReady.querySelector("h3").focus();
+  } catch {
+    formStatus.classList.add("is-error");
+    formStatus.textContent = "We couldn't send your inquiry. Please email contact@ramzor.io directly.";
+  } finally {
+    formSubmit.disabled = false;
+  }
 });
 document.getElementById("edit-inquiry").addEventListener("click", () => {
   contactReady.hidden = true;
   contactForm.hidden = false;
+  formStatus.classList.remove("is-error");
+  formStatus.textContent = "Your details are sent securely to contact@ramzor.io.";
+  contactForm.elements.namedItem("startedAt").value = String(Date.now());
   contactForm.elements.namedItem("name").focus();
 });
 

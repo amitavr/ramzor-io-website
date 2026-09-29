@@ -47,7 +47,10 @@ installation permissions are agreed before the one-week study begins.
 3. **Publish from the repository root with Cloudflare Pages.** Connect the
    `ramzor-io-website` repository, use `main` as the production branch, choose
    no framework preset, leave the build command blank, and use `.` as the build
-   output directory. No environment variables or build token are required.
+   output directory. Add these encrypted production and preview variables in
+   **Settings > Variables and Secrets**: `RESEND_API_KEY`,
+   `CONTACT_FROM_EMAIL`, and `CONTACT_TO_EMAIL`. Verify the sending domain with
+   Resend before using an address at `ramzor.io`.
 4. Optionally connect the verified `ramzor.io` domain and enable HTTPS through
    Cloudflare. DNS, deployment, and email-service settings are managed outside
    this repository.
@@ -57,24 +60,28 @@ private material out of the publishing branch. For another static host, publish
 `index.html`, `styles.css`, `site.js`, `.nojekyll`, and `assets/` with the same
 relative layout.
 
-The contact form validates details and prepares a mailto draft. Visitors must
-open and send it through their email client. It does not submit inquiries to a
-server, persist contact details, or claim that an email was sent. A visitor
-without a configured email client can use the visible address directly.
+The contact form validates details and submits them to the Cloudflare Pages
+Function at `/api/contact`. The function validates the request, rejects a hidden
+spam-trap field, and sends the inquiry through Resend to `contact@ramzor.io`.
+Provider credentials remain in encrypted Cloudflare variables and are never
+sent to the browser. A visible email address remains available as a fallback.
 
 ## Files
 
-- [index.html](../index.html): content, navigation, sections, FAQs, and dialogs.
+- [index.html](../index.html): content, navigation, sections, and dialogs.
 - [styles.css](../styles.css): responsive layouts, local fonts, and brand palette.
-- [site.js](../site.js): menu, accessible tabs/dialogs, email draft, and 3D scene.
+- [site.js](../site.js): menu, accessible tabs/dialogs, form submission, and 3D scene.
+- [functions/api/contact.js](../functions/api/contact.js): validates inquiries and
+  sends them through the server-side email provider.
 - [.nojekyll](../.nojekyll): serve the root site without Jekyll processing.
 - [assets/README.md](../assets/README.md): asset sources, pinned dependencies, and
   their bundled licenses.
 
-There are no analytics, cookies, CDN requests, or backend dependencies. Native
-anchors and email links remain usable without JavaScript. Animation pauses
-outside the viewport and in background tabs; reduced-motion preferences start
-the scene paused.
+There are no analytics or tracking cookies. The only runtime service request is
+the visitor-initiated contact submission to the same-origin Pages Function,
+which calls the configured email provider. Native anchors and email links remain
+usable without JavaScript. Animation pauses outside the viewport and in
+background tabs; reduced-motion preferences start the scene paused.
 
 ## Verification
 

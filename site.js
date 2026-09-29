@@ -31,13 +31,15 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("click", (event) => {
   if (!event.target.closest(".site-header")) closeMenu();
 });
-window.matchMedia("(min-width: 621px)").addEventListener("change", closeMenu);
+window.matchMedia("(min-width: 901px)").addEventListener("change", closeMenu);
 
 const contactDialog = document.getElementById("contact-dialog");
+const dialogOpeners = new WeakMap();
 document.querySelectorAll("[data-contact]").forEach((link) => {
   link.addEventListener("click", (event) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
+    dialogOpeners.set(contactDialog, link);
     contactDialog.showModal();
     document.body.classList.add("modal-open");
   });
@@ -46,13 +48,20 @@ document.querySelectorAll("[data-contact]").forEach((link) => {
 const privacyButton = document.querySelector("[data-privacy]");
 privacyButton.hidden = false;
 privacyButton.addEventListener("click", () => {
-  document.getElementById("privacy-dialog").showModal();
+  const privacyDialog = document.getElementById("privacy-dialog");
+  dialogOpeners.set(privacyDialog, privacyButton);
+  privacyDialog.showModal();
   document.body.classList.add("modal-open");
 });
 
 document.querySelectorAll("dialog").forEach((dialog) => {
   dialog.querySelector("[data-close-dialog]").addEventListener("click", () => dialog.close());
-  dialog.addEventListener("close", () => document.body.classList.remove("modal-open"));
+  dialog.addEventListener("close", () => {
+    document.body.classList.remove("modal-open");
+    const opener = dialogOpeners.get(dialog);
+    const focusTarget = opener && opener.getClientRects().length ? opener : menuButton;
+    focusTarget.focus();
+  });
   dialog.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
@@ -72,11 +81,13 @@ contactForm.addEventListener("submit", (event) => {
   if (!contactForm.reportValidity()) return;
   const details = new FormData(contactForm);
   const contactAddress = document.querySelector("[data-contact-email]").getAttribute("href").slice(7);
-  const subject = `ramzor.io inquiry: ${details.get("interest")}`;
+  const city = String(details.get("city")).trim();
+  const subject = `Ramzor intersection study${city ? `: ${city}` : ""}`;
   const message = [
-    "Hello ramzor.io team,", "", `Name: ${String(details.get("name")).trim()}`,
+    "Hello Ramzor team,", "", `Name: ${String(details.get("name")).trim()}`,
     `Email: ${String(details.get("email")).trim()}`, `Organization: ${String(details.get("organization")).trim()}`,
-    `Interest: ${details.get("interest")}`, "", String(details.get("message")).trim(),
+    `City: ${city}`,
+    "", "What we want to understand or improve:", String(details.get("message")).trim(),
   ].join("\r\n");
   document.getElementById("email-draft").href = `mailto:${contactAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
   contactForm.hidden = true;
@@ -89,44 +100,62 @@ document.getElementById("edit-inquiry").addEventListener("click", () => {
   contactForm.elements.namedItem("name").focus();
 });
 
-const audienceTabs = [...document.querySelectorAll("[data-audience]")];
-function selectAudience(tab) {
-  audienceTabs.forEach((candidate) => {
+const observationTabs = [...document.querySelectorAll("[data-observation]")];
+const observationMedia = document.querySelector(".observation-media");
+function selectObservation(tab) {
+  observationTabs.forEach((candidate) => {
     const selected = candidate === tab;
     candidate.setAttribute("aria-selected", String(selected));
     candidate.tabIndex = selected ? 0 : -1;
     document.getElementById(candidate.getAttribute("aria-controls")).hidden = !selected;
   });
+  observationMedia.dataset.layer = tab.dataset.observation;
+  observationMedia.dispatchEvent(new Event("layerchange"));
 }
-audienceTabs.forEach((tab, index) => {
-  tab.addEventListener("click", () => selectAudience(tab));
+observationTabs.forEach((tab, index) => {
+  tab.addEventListener("click", () => selectObservation(tab));
   tab.addEventListener("keydown", (event) => {
     let nextIndex;
-    if (event.key === "ArrowRight") nextIndex = (index + 1) % audienceTabs.length;
-    if (event.key === "ArrowLeft") nextIndex = (index - 1 + audienceTabs.length) % audienceTabs.length;
+    if (event.key === "ArrowRight") nextIndex = (index + 1) % observationTabs.length;
+    if (event.key === "ArrowLeft") nextIndex = (index - 1 + observationTabs.length) % observationTabs.length;
     if (event.key === "Home") nextIndex = 0;
-    if (event.key === "End") nextIndex = audienceTabs.length - 1;
+    if (event.key === "End") nextIndex = observationTabs.length - 1;
     if (nextIndex === undefined) return;
     event.preventDefault();
-    selectAudience(audienceTabs[nextIndex]);
-    audienceTabs[nextIndex].focus();
+    selectObservation(observationTabs[nextIndex]);
+    observationTabs[nextIndex].focus();
   });
 });
 document.getElementById("copyright-year").textContent = String(new Date().getFullYear());
 
-function createIntersection() {
+function countLineCrossings(progress, movement, countLine, loopLength) {
+  return Math.floor((progress + movement - countLine) / loopLength) - Math.floor((progress - countLine) / loopLength);
+}
+
+function setDemoMetricsVisible(visible) {
+  document.querySelectorAll("[data-demo-metrics]").forEach((metrics) => { metrics.hidden = !visible; });
+}
+
+function createIntersection({ isHero = false } = {}) {
   const THREE = window.THREE;
-  if (!THREE) return;
-  const host = document.getElementById("intersection-scene");
+  const showFallback = isHero ? showStaticHero : showStaticStudy;
+  if (!THREE) return showFallback();
+  const host = document.getElementById(isHero ? "hero-scene" : "intersection-scene");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const sceneToggle = document.getElementById("scene-toggle");
+  const sceneToggle = document.getElementById(isHero ? "hero-scene-toggle" : "scene-toggle");
+  const crossingOutput = document.getElementById("demo-vehicle-count");
+  const periodOutput = document.getElementById("demo-observation-period");
+  const completedOutput = document.getElementById("demo-completed-count");
+  const movingOutput = document.getElementById("demo-moving-count");
+  const waitingOutput = document.getElementById("demo-waiting-count");
+  const longestQueueOutput = document.getElementById("demo-longest-queue");
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "low-power", preserveDrawingBuffer: true });
   } catch {
-    return;
+    return showFallback();
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -142,7 +171,7 @@ function createIntersection() {
   const sun = new THREE.DirectionalLight(0xffffff, 3);
   sun.position.set(-14, 30, 12);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(2048, 2048);
+  sun.shadow.mapSize.set(1024, 1024);
   sun.shadow.camera.left = -32;
   sun.shadow.camera.right = 32;
   sun.shadow.camera.top = 32;
@@ -299,23 +328,76 @@ function createIntersection() {
     world.add(group);
     return group;
   }
+  const loopLength = 44;
+  const countLineProgress = 5;
+  const stopLineProgress = 15.2;
+  const queueStartProgress = 3;
+  const queueEndProgress = stopLineProgress + .5;
+  const movementExitProgress = loopLength - queueEndProgress;
   const lanes = [
     { axis: "z", offset: -1.85, direction: 1, phase: "north" },
     { axis: "z", offset: 1.85, direction: -1, phase: "north" },
     { axis: "x", offset: 1.85, direction: 1, phase: "east" },
     { axis: "x", offset: -1.85, direction: -1, phase: "east" },
   ];
+  const layers = { movements: new THREE.Group(), queues: new THREE.Group(), counts: new THREE.Group() };
+  Object.values(layers).forEach((layer) => world.add(layer));
+  function movementPath(coordinates, color) {
+    const curve = new THREE.CatmullRomCurve3(coordinates.map(([horizontal, vertical]) => new THREE.Vector3(horizontal, .14, vertical)));
+    const pathMaterial = new THREE.MeshBasicMaterial({ color });
+    layers.movements.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 64, .13, 5, false), pathMaterial));
+    const arrow = new THREE.Mesh(new THREE.ConeGeometry(.44, 1.2, 3), pathMaterial);
+    arrow.position.copy(curve.getPoint(.9));
+    arrow.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), curve.getTangent(.9).normalize());
+    layers.movements.add(arrow);
+  }
+  if (!isHero) {
+    movementPath([[1.85, 19], [1.85, 7], [1.85, -7], [1.85, -19]], 0xa6d76e);
+    movementPath([[-1.85, -19], [-1.85, -7], [-1.5, -2], [3, 1.85], [9, 1.85], [19, 1.85]], 0xffc15b);
+    movementPath([[-19, 1.85], [-8, 1.85], [-4, 2], [-1.85, 5], [-1.85, 19]], 0xfb8170);
+    lanes.forEach((lane) => {
+      const queueRegion = new THREE.Group();
+      const queueLength = queueEndProgress - queueStartProgress;
+      const position = ((queueStartProgress + queueEndProgress) / 2 - loopLength / 2) * lane.direction;
+      queueRegion.position.set(lane.axis === "x" ? position : lane.offset, 0, lane.axis === "z" ? position : lane.offset);
+      queueRegion.rotation.y = lane.axis === "z" ? (lane.direction === -1 ? 0 : Math.PI) : -lane.direction * Math.PI / 2;
+      layers.queues.add(queueRegion);
+      box(3.2, .025, queueLength, 0xf5bd52, [0, .04, 0], queueRegion, { transparent: true, opacity: .38, depthWrite: false });
+      box(.15, .025, queueLength, 0xffc15b, [1.75, .1, 0], queueRegion);
+      for (const end of [-queueLength / 2, queueLength / 2]) box(.7, .025, .15, 0xffc15b, [1.45, .1, end], queueRegion);
+    });
+    lanes.forEach((lane) => {
+      const gate = (countLineProgress - loopLength / 2) * lane.direction;
+      box(lane.axis === "z" ? 3.3 : .24, .025, lane.axis === "z" ? .24 : 3.3, 0xa6d76e,
+        [lane.axis === "x" ? gate : lane.offset, .1, lane.axis === "z" ? gate : lane.offset], layers.counts);
+      box(lane.axis === "z" ? 3.2 : 12, .02, lane.axis === "z" ? 12 : 3.2, 0xadd980,
+        [lane.axis === "x" ? -12 * lane.direction : lane.offset, .035, lane.axis === "z" ? -12 * lane.direction : lane.offset],
+        layers.counts, { transparent: true, opacity: .2, depthWrite: false });
+    });
+  }
   lanes.forEach((lane, laneIndex) => {
     lane.cars = [1, 8, 16, 32].map((progress, index) => {
-      const mesh = car(carColors[(laneIndex * 3 + index) % carColors.length], index === 2);
+      const mesh = car(carColors[(laneIndex * 3 + index) % carColors.length], !isHero && index === 2);
       mesh.rotation.y = lane.axis === "z" ? (lane.direction === 1 ? 0 : Math.PI) : (lane.direction === 1 ? Math.PI / 2 : -Math.PI / 2);
-      return { mesh, progress: progress + laneIndex * .4 };
+      let trail;
+      if (!isHero) {
+        const trailGeometry = new THREE.BufferGeometry();
+        trailGeometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(6), 3));
+        trail = new THREE.Line(trailGeometry, new THREE.LineBasicMaterial({ color: 0xc9eaa4, transparent: true, opacity: .8 }));
+        trail.frustumCulled = false;
+        layers.movements.add(trail);
+      }
+      return { mesh, trail, progress: progress + laneIndex * .4 };
     });
   });
   let elapsed = 3;
+  let observedSeconds = 0;
+  let vehicleCrossings = 0;
+  let completedMovements = 0;
   let activePhase = "north";
   function updateTraffic(delta) {
     elapsed += delta;
+    observedSeconds += delta;
     const cycle = elapsed % 30;
     activePhase = cycle < 11 ? "north" : cycle < 15 ? "clear" : cycle < 26 ? "east" : "clear";
     signals.forEach(({ bulbs, phase }) => {
@@ -328,25 +410,50 @@ function createIntersection() {
         bulb.material.emissiveIntensity = lit ? .5 : 0;
       });
     });
+    let movingVehicles = 0;
+    let waitingVehicles = 0;
+    let longestQueue = 0;
     lanes.forEach((lane) => {
       const positions = lane.cars.map((vehicle) => vehicle.progress);
+      let queuedInLane = 0;
       lane.cars.forEach((vehicle, index) => {
-        let movement = delta * 3.7;
-        const gap = Math.min(...positions.filter((_, candidate) => candidate !== index).map((position) => (position - vehicle.progress + 44) % 44));
-        movement = Math.max(0, Math.min(movement, gap - 3.3));
-        const stopLine = 15.2;
-        if (activePhase !== lane.phase && vehicle.progress <= stopLine) movement = Math.min(movement, Math.max(0, stopLine - vehicle.progress));
-        vehicle.progress = (vehicle.progress + movement) % 44;
-        const position = lane.direction * (vehicle.progress - 22);
+        const gap = Math.min(...positions.filter((_, candidate) => candidate !== index).map((position) => (position - vehicle.progress + loopLength) % loopLength));
+        let availableMovement = Math.max(0, gap - 3.3);
+        if (activePhase !== lane.phase && vehicle.progress <= stopLineProgress) availableMovement = Math.min(availableMovement, Math.max(0, stopLineProgress - vehicle.progress));
+        const movement = Math.min(delta * 3.7, availableMovement);
+        vehicleCrossings += countLineCrossings(vehicle.progress, movement, countLineProgress, loopLength);
+        completedMovements += countLineCrossings(vehicle.progress, movement, movementExitProgress, loopLength);
+        vehicle.progress = (vehicle.progress + movement) % loopLength;
+        if (availableMovement > .001) movingVehicles += 1;
+        else if (vehicle.progress >= queueStartProgress && vehicle.progress <= queueEndProgress) queuedInLane += 1;
+        const position = lane.direction * (vehicle.progress - loopLength / 2);
         vehicle.mesh.position.set(lane.axis === "x" ? position : lane.offset, .035, lane.axis === "z" ? position : lane.offset);
+        if (vehicle.trail) {
+          const tail = lane.direction * (Math.max(0, vehicle.progress - 4.5) - loopLength / 2);
+          const points = vehicle.trail.geometry.attributes.position;
+          points.setXYZ(0, lane.axis === "x" ? tail : lane.offset, .12, lane.axis === "z" ? tail : lane.offset);
+          points.setXYZ(1, lane.axis === "x" ? position : lane.offset, .12, lane.axis === "z" ? position : lane.offset);
+          points.needsUpdate = true;
+        }
       });
+      waitingVehicles += queuedInLane;
+      longestQueue = Math.max(longestQueue, queuedInLane);
     });
+    if (!isHero) {
+      const wholeSeconds = Math.floor(observedSeconds);
+      const observationPeriod = `${String(Math.floor(wholeSeconds / 60)).padStart(2, "0")}:${String(wholeSeconds % 60).padStart(2, "0")}`;
+      for (const [output, value] of [[crossingOutput, vehicleCrossings], [periodOutput, observationPeriod],
+        [completedOutput, completedMovements], [movingOutput, movingVehicles], [waitingOutput, waitingVehicles], [longestQueueOutput, longestQueue]]) {
+        const text = String(value);
+        if (output.value !== text) output.value = text;
+      }
+    }
     renderer.domElement.dataset.elapsed = elapsed.toFixed(2);
     renderer.domElement.dataset.phase = activePhase;
   }
 
   let paused = reducedMotion.matches;
-  let inView = true;
+  let inView = false;
   let frameHandle = 0;
   let previousTime = 0;
   function render() { renderer.render(scene, camera); }
@@ -365,9 +472,14 @@ function createIntersection() {
   }
   function setPaused(value) {
     paused = value;
+    if (paused && frameHandle) {
+      cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
+    }
     sceneToggle.setAttribute("aria-pressed", String(paused));
-    sceneToggle.setAttribute("aria-label", paused ? "Resume intersection animation" : "Pause intersection animation");
-    sceneToggle.title = paused ? "Resume intersection animation" : "Pause intersection animation";
+    const animationName = isHero ? "hero animation" : "intersection animation";
+    sceneToggle.setAttribute("aria-label", `${paused ? "Resume" : "Pause"} ${animationName}`);
+    sceneToggle.title = sceneToggle.getAttribute("aria-label");
     sceneToggle.querySelector("[data-pause]").toggleAttribute("hidden", paused);
     sceneToggle.querySelector("[data-play]").toggleAttribute("hidden", !paused);
     resumeRendering();
@@ -375,8 +487,9 @@ function createIntersection() {
   function resize() {
     const width = host.clientWidth;
     const height = host.clientHeight;
+    if (!width || !height) return;
     const aspect = width / height;
-    const span = window.innerWidth <= 620 ? 46 : 43;
+    const span = isHero ? 43 * Math.max(1, (1183 / 918) / aspect) : window.innerWidth <= 620 ? 61 : 54;
     camera.left = -span * aspect / 2;
     camera.right = span * aspect / 2;
     camera.top = span / 2;
@@ -385,31 +498,143 @@ function createIntersection() {
     renderer.setSize(width, height, false);
     render();
   }
+  function updateLayer() {
+    const selected = isHero ? "none" : observationMedia.dataset.layer;
+    Object.entries(layers).forEach(([name, layer]) => { layer.visible = name === selected; });
+    const descriptions = {
+      movements: "Illustrative intersection with movement arrows. Figures show animated vehicles clearing the junction and moving through the scene.",
+      queues: "Illustrative intersection with amber queue regions on all four approaches. Waiting vehicles and queue lengths are counted from the animation, not recorded traffic.",
+      counts: "Illustrative intersection with counting lines. Crossings and observation time are calculated from this animation, not recorded traffic.",
+    };
+    if (!isHero) host.setAttribute("aria-label", descriptions[selected]);
+    renderer.domElement.dataset.layer = selected;
+    render();
+  }
+  if (!isHero) observationMedia.addEventListener("layerchange", updateLayer);
   new ResizeObserver(resize).observe(host);
   new IntersectionObserver((entries) => {
     inView = entries[0].isIntersecting;
     resumeRendering();
-  }, { threshold: .02 }).observe(document.querySelector(".hero"));
+  }, { threshold: .02 }).observe(isHero ? document.querySelector(".hero") : host);
   document.addEventListener("visibilitychange", resumeRendering);
   reducedMotion.addEventListener("change", (event) => setPaused(event.matches));
   sceneToggle.addEventListener("click", () => setPaused(!paused));
   renderer.domElement.addEventListener("webglcontextlost", (event) => {
     event.preventDefault();
     setPaused(true);
-    sceneToggle.hidden = true;
-    host.classList.remove("scene-ready");
+    showFallback();
   });
   renderer.domElement.addEventListener("webglcontextrestored", () => {
     resize();
     host.classList.add("scene-ready");
     sceneToggle.hidden = false;
+    if (isHero) {
+      host.setAttribute("aria-label", "Illustrative intersection with moving vehicles and changing traffic signals. Not a real deployment.");
+    } else {
+      setDemoMetricsVisible(true);
+      document.querySelector(".observation-tabs").hidden = false;
+      document.getElementById("scene-caption").textContent = "Illustrative animation. Not a real deployment.";
+    }
+    updateLayer();
     setPaused(reducedMotion.matches);
   });
   updateTraffic(0);
+  if (!isHero) setDemoMetricsVisible(true);
   resize();
+  updateLayer();
   sceneToggle.hidden = false;
   host.classList.add("scene-ready");
   setPaused(paused);
 }
 
-createIntersection();
+function showStaticHero() {
+  const host = document.getElementById("hero-scene");
+  host.classList.remove("scene-ready");
+  host.setAttribute("aria-label", "Illustrative intersection still. Not a real deployment.");
+  document.getElementById("hero-scene-toggle").hidden = true;
+}
+
+function showStaticStudy() {
+  const host = document.getElementById("intersection-scene");
+  host.classList.remove("scene-ready");
+  host.setAttribute("aria-label", "Illustrative intersection still. Interactive overlays are unavailable.");
+  document.getElementById("scene-toggle").hidden = true;
+  setDemoMetricsVisible(false);
+  document.querySelector(".observation-tabs").hidden = true;
+  document.getElementById("scene-caption").textContent = "Illustrative still. Interactive overlays are unavailable in this browser.";
+}
+
+let intersectionLibrary;
+function loadIntersectionLibrary() {
+  if (window.THREE) return Promise.resolve();
+  if (!intersectionLibrary) {
+    intersectionLibrary = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "assets/three.min.js";
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+  return intersectionLibrary;
+}
+
+function initializeHero() {
+  const heroObserver = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    heroObserver.disconnect();
+    loadIntersectionLibrary().then(() => createIntersection({ isHero: true })).catch(showStaticHero);
+  }, { rootMargin: "100px" });
+  heroObserver.observe(document.querySelector(".hero"));
+}
+
+function initializeStudy() {
+  const source = observationMedia.dataset.studySource;
+  const media = source === "video" ? document.getElementById("study-video") : source === "image" ? document.getElementById("study-image") : null;
+  if (media && media.getAttribute("src")) {
+    const host = document.getElementById("intersection-scene");
+    const overlay = document.getElementById("footage-overlay");
+    host.hidden = true;
+    media.hidden = false;
+    setDemoMetricsVisible(false);
+    overlay.toggleAttribute("hidden", overlay.childElementCount === 0);
+    document.getElementById("scene-toggle").hidden = true;
+    document.querySelector(".scene-reference").hidden = true;
+    document.querySelector(".demo-label").textContent = media.dataset.label || "ILLUSTRATIVE MEDIA";
+    document.getElementById("scene-caption").textContent = media.dataset.caption || "Illustrative media. Not a real deployment.";
+    function fitMedia() {
+      const width = source === "video" ? media.videoWidth : media.naturalWidth;
+      const height = source === "video" ? media.videoHeight : media.naturalHeight;
+      if (!width || !height) return;
+      overlay.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    }
+    function updateFootageLayer() {
+      overlay.querySelectorAll("[data-layer]").forEach((layer) => {
+        layer.toggleAttribute("hidden", layer.dataset.layer !== observationMedia.dataset.layer);
+      });
+    }
+    media.addEventListener(source === "video" ? "loadedmetadata" : "load", fitMedia);
+    media.addEventListener("error", () => {
+      media.hidden = true;
+      overlay.toggleAttribute("hidden", true);
+      host.hidden = false;
+      document.querySelector(".demo-label").textContent = "ILLUSTRATIVE FALLBACK";
+      showStaticStudy();
+    });
+    observationMedia.addEventListener("layerchange", updateFootageLayer);
+    fitMedia();
+    updateFootageLayer();
+    document.querySelector(".observation-tabs").hidden = overlay.childElementCount === 0;
+    return;
+  }
+  const previewObserver = new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting) return;
+    previewObserver.disconnect();
+    if (observationMedia.dataset.studySource !== "demo") return;
+    loadIntersectionLibrary().then(() => createIntersection()).catch(showStaticStudy);
+  }, { rootMargin: "100px" });
+  previewObserver.observe(observationMedia);
+}
+
+initializeHero();
+initializeStudy();

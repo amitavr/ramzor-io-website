@@ -4,14 +4,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#f4f6f3">
-    <meta name="description" content="Low-cost traffic analysis, fully managed. ramzor.io installs its own cameras and delivers junction analysis and an optimized signal-cycle proposal one week later. No city equipment or IT setup needed.">
+    <meta name="description" content="Ramzor studies your intersection with temporary cameras. A week of observed traffic informs your analysis and signal-timing proposal. No hardware purchase or IT integration.">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="ramzor.io | Our cameras. Your traffic analysis in one week.">
-    <meta property="og:description" content="We install the cameras. One week later, you get the analysis and an optimized signal-cycle proposal. Low cost, with no city equipment or IT setup needed.">
-    <title>ramzor.io | Our cameras. Your traffic analysis in one week.</title>
+    <meta property="og:title" content="Ramzor | Traffic signal studies. One intersection at a time.">
+    <meta property="og:description" content="Temporary cameras. A week of observed traffic. A practical signal-timing proposal. Start with one intersection, without buying hardware or integrating software.">
+    <meta property="og:site_name" content="Ramzor">
+    <meta property="og:url" content="https://ramzor.io/">
+    <meta property="og:image" content="https://ramzor.io/assets/intersection-fallback.png">
+    <meta property="og:image:width" content="1183">
+    <meta property="og:image:height" content="918">
+    <meta property="og:image:alt" content="Ramzor's illustrative intersection model, not a real deployment.">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Ramzor | Traffic signal studies. One intersection at a time.</title>
+    <link rel="canonical" href="https://ramzor.io/">
     <link rel="icon" type="image/png" href="assets/favicon-v2.png">
     <link rel="stylesheet" href="styles.css">
-    <script src="assets/three.min.js" defer></script>
     <script src="assets/lucide.min.js" defer></script>
     <script src="site.js" defer></script>
   </head>
@@ -28,10 +35,11 @@
           <i data-lucide="x" class="menu-close-icon" aria-hidden="true"></i>
         </button>
         <nav id="site-navigation" class="site-nav" aria-label="Main navigation">
-          <a href="#platform">Our solution</a>
           <a href="#how-it-works">How it works</a>
+          <a href="#what-you-get">What you get</a>
           <a href="#who-its-for">Who it's for</a>
-          <a class="button button-dark nav-contact" href="mailto:hello@ramzor.io" data-contact>Let's talk <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+          <a href="#faq">FAQ</a>
+          <a class="button button-dark nav-contact" href="mailto:hello@ramzor.io" data-contact>Evaluate an intersection <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
         </nav>
       </div>
     </header>
@@ -39,24 +47,25 @@
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-grid" aria-hidden="true"></div>
-        <div id="intersection-scene" class="intersection-scene" role="img" aria-label="An illustrative 3D city intersection with traffic lights, moving vehicles, trees, and buildings."></div>
+        <div id="hero-scene" class="hero-art" role="img" aria-label="Illustrative intersection with moving vehicles and changing traffic signals. Not a real deployment.">
+          <img src="assets/intersection-fallback.png" alt="" width="1183" height="918" fetchpriority="high">
+        </div>
         <div class="container hero-inner">
           <div class="hero-copy">
-            <p class="eyebrow"><span class="signal-dot"></span> LOW-COST. FULLY MANAGED.</p>
             <h1 id="hero-title">ramzor<span>.io</span></h1>
-            <h2>We install the cameras.<br>One week. Clear answers.</h2>
-            <p class="hero-description">One week after installation, get your traffic analysis and an optimized signal-cycle proposal. No city equipment or IT setup needed.</p>
+            <h2>Is your signal timing<br>still right?</h2>
+            <p class="hero-promise">Give us one week to find out.</p>
+            <p class="hero-description">We install temporary cameras, measure a week of traffic, and deliver a data-backed signal-timing proposal.</p>
             <div class="hero-actions">
-              <a class="button button-green" href="mailto:hello@ramzor.io" data-contact>Let's talk <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
-              <a class="text-link" href="#platform">Our solution <i data-lucide="arrow-down" aria-hidden="true"></i></a>
+              <a class="button button-green" href="mailto:hello@ramzor.io" data-contact>Evaluate an intersection <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+              <a class="text-link hero-secondary" href="#see-traffic">See the study <i data-lucide="arrow-down" aria-hidden="true"></i></a>
             </div>
           </div>
-          <div class="scene-label" aria-hidden="true"><span class="viewfinder-mark">+</span> A LITTLE PERSPECTIVE.<br><span class="scene-label-indent">A LOT OF POSSIBILITY.</span></div>
           <div class="hero-bottom">
-            <p class="hero-note"><span class="signal-trio" aria-hidden="true"><span></span><span></span><span></span></span> Our cameras. Our setup. Your analysis.</p>
-            <div class="scene-controls">
-              <span id="scene-caption">ILLUSTRATIVE INTERSECTION</span>
-              <button id="scene-toggle" class="icon-button" type="button" aria-label="Pause intersection animation" aria-pressed="false" title="Pause intersection animation" hidden>
+            <p class="hero-note"><span class="signal-trio" aria-hidden="true"><span></span><span></span><span></span></span> One intersection is enough to start.</p>
+            <div class="hero-scene-controls">
+              <span class="hero-image-note">ILLUSTRATIVE INTERSECTION</span>
+              <button id="hero-scene-toggle" class="icon-button" type="button" aria-label="Pause hero animation" aria-pressed="false" title="Pause hero animation" hidden>
                 <i data-lucide="pause" data-pause aria-hidden="true"></i>
                 <i data-lucide="play" data-play aria-hidden="true" hidden></i>
               </button>
@@ -65,140 +74,199 @@
         </div>
       </section>
 
-      <section class="audience-strip" aria-label="Who we work with">
-        <div class="container audience-strip-inner">
-          <p>For the people<br><strong>behind the movement.</strong></p>
-          <span><i data-lucide="building-2" aria-hidden="true"></i> Cities &amp; municipalities</span>
-          <span><i data-lucide="route" aria-hidden="true"></i> Traffic engineers</span>
-          <span><i data-lucide="waypoints" aria-hidden="true"></i> Mobility partners</span>
+      <section class="study-strip" aria-label="The study at a glance">
+        <div class="container study-strip-inner">
+          <p><span>01 /</span> No permanent hardware</p>
+          <p><span>02 /</span> No IT integration</p>
+          <p><span>03 /</span> One-week observation</p>
         </div>
       </section>
 
-      <section id="platform" class="section platform-section">
+      <section id="see-traffic" class="section observation-section" aria-labelledby="observation-title">
         <div class="container">
-          <p class="eyebrow section-eyebrow"><span>01</span> OUR SOLUTION</p>
+          <p class="eyebrow section-eyebrow"><span>01</span> THE INTERSECTION, OBSERVED</p>
           <div class="section-heading">
-            <h2>We handle the setup.<br><span class="muted">You get the insight.</span></h2>
-            <p>A low-cost service, from cameras to a new timing plan. We install our equipment and handle the analysis. One week later, you receive the findings and an optimized signal-cycle proposal.</p>
+            <h2 id="observation-title">See what Ramzor sees.</h2>
+            <p>A week of traffic becomes a picture of how the intersection actually works.</p>
           </div>
-          <div class="feature-grid">
-            <article class="feature">
-              <div class="feature-visual movement-visual" aria-hidden="true">
-                <div class="movement-lane"><i data-lucide="corner-up-left"></i><span class="vehicle-marker marker-amber"></span><span class="vehicle-marker marker-white"></span></div>
-                <div class="movement-lane"><i data-lucide="arrow-up"></i><span class="vehicle-marker marker-green"></span><span class="vehicle-marker marker-white"></span><span class="vehicle-marker marker-white"></span></div>
-                <div class="movement-lane"><i data-lucide="corner-up-right"></i><span class="vehicle-marker marker-white"></span><span class="vehicle-marker marker-green"></span></div>
-                <span class="visual-caption">EVERY DIRECTION COUNTS</span>
-              </div>
-              <p class="feature-kicker">VOLUMES &amp; TURNING MOVEMENTS</p>
-              <h3>Understand the demand.</h3>
-              <p>We map lane directions, count vehicles, and analyze turning movements to understand how much traffic each part of the junction needs to serve.</p>
-            </article>
-            <article class="feature">
-              <div class="feature-visual queue-visual" aria-hidden="true">
-                <div class="queue-row"><span>N1</span><div><b></b><b></b><b></b><b></b><b class="queue-faint"></b></div><i></i></div>
-                <div class="queue-row"><span>N2</span><div><b></b><b></b><b></b><b class="queue-faint"></b></div><i></i></div>
-                <div class="queue-row"><span>E1</span><div><b class="queue-moving"></b><b class="queue-moving"></b></div><i class="green-light"></i></div>
-                <span class="visual-caption">ILLUSTRATIVE LANE ACTIVITY</span>
-              </div>
-              <p class="feature-kicker">QUEUES &amp; WAITING TIME <span class="pilot-label">IN VALIDATION</span></p>
-              <h3>See where traffic waits.</h3>
-              <p>Lane-level queues and waiting patterns show where demand builds up. We evaluate these measurements for each camera and scene to inform the timing proposal.</p>
-            </article>
-            <article class="feature">
-              <div class="feature-visual data-visual" aria-hidden="true">
-                <div class="data-sheet">
-                  <div><span>phase</span><span>movement</span><span>green</span></div>
-                  <div><span>01</span><span>through</span><span>30 s</span></div>
-                  <div><span>02</span><span>left</span><span>15 s</span></div>
-                  <div><span>03</span><span>cross traffic</span><span>25 s</span></div>
-                </div>
-                <span class="visual-caption">ILLUSTRATIVE SIGNAL CYCLE</span>
-              </div>
-              <p class="feature-kicker">SIGNAL-CYCLE OPTIMIZATION</p>
-              <h3>Turn patterns into timing.</h3>
-              <p>We use observed demand to shape a new traffic-light cycle: the sequence of movements and how much green time each receives. You get the plan and the analysis behind it.</p>
-            </article>
+          <div class="observation-toolbar">
+            <span class="technical-label demo-label">ILLUSTRATIVE EXAMPLE</span>
+            <div class="observation-tabs" role="tablist" aria-label="Observation layer">
+              <button id="tab-movements" type="button" role="tab" aria-selected="true" aria-controls="panel-movements" data-observation="movements"><i data-lucide="route" aria-hidden="true"></i> Movements</button>
+              <button id="tab-queues" type="button" role="tab" aria-selected="false" aria-controls="panel-queues" tabindex="-1" data-observation="queues"><i data-lucide="rows-3" aria-hidden="true"></i> Queues</button>
+              <button id="tab-counts" type="button" role="tab" aria-selected="false" aria-controls="panel-counts" tabindex="-1" data-observation="counts"><i data-lucide="list-ordered" aria-hidden="true"></i> Lane counts</button>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section id="how-it-works" class="section process-section">
-        <div class="container">
-          <p class="eyebrow section-eyebrow"><span>02</span> WE INSTALL. WE OBSERVE. WE DELIVER.</p>
-          <div class="section-heading">
-            <h2>Cameras installed.<br>Analysis a week later.</h2>
-            <p>No cameras to supply. No hardware to buy. No IT system to integrate. We bring what we need and handle the work, from installation to your report.</p>
-          </div>
-          <div class="process-grid">
-            <article class="process-step"><div class="step-top"><span>01 /</span><i data-lucide="video" aria-hidden="true"></i></div><h3>We bring the cameras.</h3><p>Our team installs our cameras at your junction. Your city does not need to supply equipment or set up an IT integration.</p><span class="step-tag">INSTALLATION BY RAMZOR</span></article>
-            <article class="process-step"><div class="step-top"><span>02 /</span><i data-lucide="scan-line" aria-hidden="true"></i></div><h3>We study the traffic.</h3><p>We collect and analyze the footage, studying lane directions, turning movements, volumes, and queues. We handle the analysis.</p><span class="step-tag">OBSERVATION + ANALYSIS</span></article>
-            <article class="process-step"><div class="step-top"><span>03 /</span><i data-lucide="chart-no-axes-combined" aria-hidden="true"></i></div><h3>You get the results.</h3><p>One week after camera installation, receive your junction analysis and an optimized signal-cycle proposal based on observed traffic.</p><span class="step-tag">ONE WEEK AFTER INSTALLATION</span></article>
-          </div>
-          <div class="process-footnote"><span class="signal-dot"></span> The week starts at camera installation. Site access is agreed beforehand; live signal changes remain subject to city approval.</div>
-        </div>
-      </section>
-
-      <section id="who-its-for" class="section use-cases-section">
-        <div class="container">
-          <p class="eyebrow section-eyebrow"><span>03</span> DIFFERENT ROLES. SHARED DIRECTION.</p>
-          <div class="use-cases-layout">
-            <div><h2>For the teams<br>moving cities forward.</h2><p class="use-cases-intro">Traffic insight without equipment purchases<br>or another technical project for your team.</p></div>
-            <div class="audience-workspace">
-              <div class="audience-tabs" role="tablist" aria-label="Your team">
-                <button id="tab-cities" type="button" role="tab" aria-selected="true" aria-controls="panel-cities" data-audience="cities"><i data-lucide="building-2" aria-hidden="true"></i> Cities</button>
-                <button id="tab-engineers" type="button" role="tab" aria-selected="false" aria-controls="panel-engineers" tabindex="-1" data-audience="engineers"><i data-lucide="route" aria-hidden="true"></i> Engineers</button>
-                <button id="tab-partners" type="button" role="tab" aria-selected="false" aria-controls="panel-partners" tabindex="-1" data-audience="partners"><i data-lucide="waypoints" aria-hidden="true"></i> Partners</button>
+          <div class="observation-layout">
+            <figure class="observation-figure">
+              <!-- TODO(content): Replace the illustration with approved footage and calibrated overlays. See README.md. -->
+              <div class="observation-media" data-study-source="demo" data-layer="movements">
+                <div id="intersection-scene" class="intersection-scene" role="img" aria-label="Illustrative intersection with roads, signals, and vehicles. Not recorded traffic."></div>
+                <video id="study-video" controls playsinline preload="none" aria-label="Intersection study footage" hidden></video>
+                <img id="study-image" alt="" hidden>
+                <svg id="footage-overlay" viewBox="0 0 1183 918" preserveAspectRatio="xMidYMid meet" aria-hidden="true" hidden></svg>
+                <span class="scene-reference" aria-hidden="true">RAMZOR / FIELD STUDY</span>
               </div>
-              <div id="panel-cities" class="audience-panel" role="tabpanel" aria-labelledby="tab-cities" tabindex="0"><p class="panel-kicker">CITIES &amp; MUNICIPALITIES</p><h3>Less setup.<br>More clarity.</h3><p>A low-cost, fully managed service. We install our cameras and deliver your analysis and proposed cycle one week later.</p><ul class="check-list"><li><i data-lucide="check" aria-hidden="true"></i> No city cameras or equipment to supply</li><li><i data-lucide="check" aria-hidden="true"></i> No IT integration for the study</li><li><i data-lucide="check" aria-hidden="true"></i> Analysis and a proposed signal cycle</li></ul></div>
-              <div id="panel-engineers" class="audience-panel" role="tabpanel" aria-labelledby="tab-engineers" tabindex="0" hidden><p class="panel-kicker">TRAFFIC ENGINEERS &amp; CONSULTANTS</p><h3>The evidence.<br>Without the field setup.</h3><p>We install the cameras and analyze the traffic. Review the evidence and proposed cycle one week after installation.</p><ul class="check-list"><li><i data-lucide="check" aria-hidden="true"></i> Lane directions and turning volumes</li><li><i data-lucide="check" aria-hidden="true"></i> Scene-specific queue analysis</li><li><i data-lucide="check" aria-hidden="true"></i> An evidence-based timing proposal</li></ul></div>
-              <div id="panel-partners" class="audience-panel" role="tabpanel" aria-labelledby="tab-partners" tabindex="0" hidden><p class="panel-kicker">MOBILITY, RESEARCH &amp; TECHNOLOGY</p><h3>Your junction study.<br>Handled by ramzor.</h3><p>Add a fully managed traffic study to your project. We bring the cameras and deliver analysis and a proposed cycle one week after installation.</p><ul class="check-list"><li><i data-lucide="check" aria-hidden="true"></i> Cameras and installation provided by ramzor</li><li><i data-lucide="check" aria-hidden="true"></i> Junction observation and analysis</li><li><i data-lucide="check" aria-hidden="true"></i> Signal-cycle proposals grounded in demand</li></ul></div>
-              <a class="text-link" href="mailto:hello@ramzor.io" data-contact>Talk through your use case <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+              <figcaption>
+                <span id="scene-caption">Illustrative animation. Not a real deployment.</span>
+                <button id="scene-toggle" class="icon-button" type="button" aria-label="Pause intersection animation" aria-pressed="false" title="Pause intersection animation" hidden>
+                  <i data-lucide="pause" data-pause aria-hidden="true"></i>
+                  <i data-lucide="play" data-play aria-hidden="true" hidden></i>
+                </button>
+              </figcaption>
+            </figure>
+            <div class="observation-notes">
+              <div id="panel-movements" class="observation-panel" role="tabpanel" aria-labelledby="tab-movements" tabindex="0">
+                <p class="technical-label">PATHS THROUGH THE JUNCTION</p>
+                <h3>Every direction counts.</h3>
+                <p>Follow where vehicles enter, which lane they use, and where they leave.</p>
+                <ul class="movement-legend">
+                  <li><i data-lucide="arrow-up" aria-hidden="true"></i><span class="legend-line line-green"></span> Straight</li>
+                  <li><i data-lucide="corner-up-left" aria-hidden="true"></i><span class="legend-line line-amber"></span> Left turn</li>
+                  <li><i data-lucide="corner-up-right" aria-hidden="true"></i><span class="legend-line line-red"></span> Right turn</li>
+                </ul>
+                <dl class="demo-counts" data-demo-metrics hidden><div><dt>Cleared the junction</dt><dd><output id="demo-completed-count" aria-live="off">0</output></dd></div><div><dt>Vehicles moving</dt><dd><output id="demo-moving-count" aria-live="off">0</output></dd></div></dl>
+              </div>
+              <div id="panel-queues" class="observation-panel" role="tabpanel" aria-labelledby="tab-queues" tabindex="0" hidden>
+                <p class="technical-label">AT EACH APPROACH</p>
+                <h3>Where traffic waits.</h3>
+                <p>Marked lane regions show where queues build and clear on each approach.</p>
+                <p class="measurement-note"><span class="legend-line line-amber"></span> Four illustrative queue regions</p>
+                <dl class="demo-counts" data-demo-metrics hidden><div><dt>Vehicles waiting</dt><dd><output id="demo-waiting-count" aria-live="off">0</output></dd></div><div><dt>Longest queue (vehicles)</dt><dd><output id="demo-longest-queue" aria-live="off">0</output></dd></div></dl>
+              </div>
+              <div id="panel-counts" class="observation-panel" role="tabpanel" aria-labelledby="tab-counts" tabindex="0" hidden>
+                <p class="technical-label">COUNTS FROM THE ANIMATION</p>
+                <h3>Count passing traffic.</h3>
+                <p>Each vehicle crossing a marked line contributes to the count.</p>
+                <dl id="demo-count-metrics" class="demo-counts" data-demo-metrics hidden><div><dt>Vehicle crossings</dt><dd><output id="demo-vehicle-count" aria-live="off">0</output></dd></div><div><dt>Observation period</dt><dd><output id="demo-observation-period" aria-live="off">00:00</output></dd></div></dl>
+              </div>
+              <p class="observation-disclaimer">Counts reflect the animation, not recorded traffic.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="accuracy-band">
-        <div class="container accuracy-inner"><div class="accuracy-icon"><i data-lucide="scan-eye" aria-hidden="true"></i></div><h2>Better timing<br>needs honest data.</h2><p>A cycle is only as good as the traffic behind it. We review vehicle counts, lane movements, and scene-specific limitations before using them to shape the recommendation.</p></div>
+      <section id="what-you-get" class="section deliverables-section" aria-labelledby="deliverables-title">
+        <div class="container deliverables-layout">
+          <div class="deliverables-intro">
+            <p class="eyebrow section-eyebrow"><span>02</span> THE DELIVERABLE</p>
+            <h2 id="deliverables-title">A report you can<br>put to work.</h2>
+            <p>The field study runs for roughly one week. Then you receive the traffic analysis and a signal-timing proposal, with the reasoning behind it.</p>
+            <p>Review it with your team. We can also arrange and set the approved signal cycle, subject to engineering review and controller requirements.</p>
+            <a class="text-link" href="#how-it-works">From installation to proposal <i data-lucide="arrow-down" aria-hidden="true"></i></a>
+          </div>
+          <article class="report-sheet" aria-labelledby="report-title">
+            <div class="report-header"><span class="technical-label">RAMZOR / FIELD REPORT</span><span class="signal-trio" aria-hidden="true"><span></span><span></span><span></span></span></div>
+            <h3 id="report-title">Intersection study</h3>
+            <p class="report-subtitle">Sample report contents, not a completed study.</p>
+            <ol class="report-contents">
+              <li><span>01</span><div><h4>Turning movements</h4><p>Where vehicles enter and leave, by approach.</p></div></li>
+              <li><span>02</span><div><h4>Demand by time of day</h4><p>Lane volumes across the observation period.</p></div></li>
+              <li><span>03</span><div><h4>Queue patterns</h4><p>Where traffic waits, with measurement limitations noted.</p></div></li>
+              <li><span>04</span><div><h4>Peak periods</h4><p>When demand is highest and which movements dominate.</p></div></li>
+              <li><span>05</span><div><h4>Signal-timing proposal</h4><p>Recommended changes and the observations behind them.</p></div></li>
+            </ol>
+            <div class="report-footer"><i data-lucide="file-text" aria-hidden="true"></i><span>Analysis + proposal / for engineering review</span></div>
+          </article>
+        </div>
       </section>
 
-      <section class="section faq-section" aria-labelledby="faq-title">
+      <section class="section example-section" aria-labelledby="example-title">
+        <div class="container">
+          <div class="section-heading">
+            <div><p class="eyebrow section-eyebrow">FROM OBSERVATION TO A DECISION</p><h2 id="example-title">Put the timing<br>beside the traffic.</h2></div>
+            <p class="example-label">Illustrative example. No measured results or calculated timing plan.</p>
+          </div>
+          <ol class="timing-flow">
+            <li><div class="flow-label"><span>01 / CURRENT SIGNAL</span><i data-lucide="arrow-right" aria-hidden="true"></i></div><h3>Start with the plan.</h3><p>Look at the phase sequence and the green time each movement receives.</p><div class="phase-sequence" aria-label="Schematic movements: straight, turn, cross traffic"><span><i data-lucide="arrow-up" aria-hidden="true"></i> Through</span><span><i data-lucide="corner-up-left" aria-hidden="true"></i> Turn</span><span><i data-lucide="arrow-right" aria-hidden="true"></i> Cross</span></div></li>
+            <li><div class="flow-label"><span>02 / OBSERVED TRAFFIC</span><i data-lucide="arrow-right" aria-hidden="true"></i></div><h3>Check what happens.</h3><p>Suppose the through queue persists while turning demand is lighter.</p><div class="flow-finding"><i data-lucide="rows-3" aria-hidden="true"></i><span>Does the allocation match the demand?</span></div></li>
+            <li><div class="flow-label"><span>03 / PROPOSED TIMING</span><i data-lucide="corner-down-left" aria-hidden="true"></i></div><h3>Review the allocation.</h3><p>Consider the through phase alongside pedestrian clearance, other movements, and site constraints.</p><div class="flow-finding"><i data-lucide="clipboard-check" aria-hidden="true"></i><span>A proposal for review, not automatic control.</span></div></li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="section process-section" aria-labelledby="process-title">
+        <div class="container">
+          <p class="eyebrow section-eyebrow"><span>03</span> THE FIELDWORK, TAKEN CARE OF</p>
+          <div class="section-heading"><h2 id="process-title">You choose the junction.<br>We handle the rest.</h2><p>From temporary cameras to analysis, a timing proposal, and putting approved changes into operation.</p></div>
+          <ol class="process-grid">
+            <li class="process-step"><span class="step-number">01</span><div><h3>We install.</h3><p>Temporary cameras are installed around the intersection. No permanent infrastructure is required.</p></div></li>
+            <li class="process-step"><span class="step-number">02</span><div><h3>We observe.</h3><p>Traffic is observed for roughly one week. Video is processed without being recorded or stored.</p></div></li>
+            <li class="process-step"><span class="step-number">03</span><div><h3>We measure.</h3><p>We measure movements, volumes, queues, and demand patterns, retaining numerical traffic data.</p></div></li>
+            <li class="process-step"><span class="step-number">04</span><div><h3>We put it to work.</h3><p>You receive the analysis and timing proposal. We can also arrange and set the signal cycle after city approval.</p></div></li>
+          </ol>
+          <p class="process-footnote">Your team provides site access and the necessary approvals. We agree the delivery date and any controller changes before work begins.</p>
+        </div>
+      </section>
+
+      <section class="section pilot-section" aria-labelledby="pilot-title">
+        <div class="container pilot-layout">
+          <div><p class="eyebrow section-eyebrow"><span>04</span> A MANAGEABLE FIRST STEP</p><h2 id="pilot-title">A study.<br>Not a new system.</h2><p>Keep your existing traffic system. We handle the study and can put the approved timing changes into operation.</p></div>
+          <ul class="pilot-list">
+            <li><i data-lucide="check" aria-hidden="true"></i> No cameras to purchase</li>
+            <li><i data-lucide="check" aria-hidden="true"></i> No permanent installation</li>
+            <li><i data-lucide="check" aria-hidden="true"></i> No IT integration</li>
+            <li><i data-lucide="check" aria-hidden="true"></i> No new traffic-management platform</li>
+            <li><i data-lucide="check" aria-hidden="true"></i> No long-term software commitment</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="privacy-section" aria-labelledby="recording-title">
+        <div class="container privacy-layout">
+          <div><p class="eyebrow section-eyebrow">PRIVACY</p><h2 id="recording-title">Traffic analysis,<br>not surveillance.</h2></div>
+          <div><p>Ramzor operates in compliance with GDPR.</p><p>Video is processed without being recorded or stored. Only numerical traffic measurements are retained from the study, not footage.</p></div>
+        </div>
+      </section>
+
+      <section id="who-its-for" class="section audience-section" aria-labelledby="audience-title">
+        <div class="container audience-layout">
+          <div><p class="eyebrow section-eyebrow">WHO IT'S FOR</p><h2 id="audience-title">For the people<br>responsible for the junction.</h2></div>
+          <dl class="audience-list">
+            <div><dt>Municipalities</dt><dd>Evaluate an intersection without starting a major infrastructure project.</dd></div>
+            <div><dt>Traffic engineers</dt><dd>Get the field data and movement analysis needed to review signal timing.</dd></div>
+            <div><dt>Engineering &amp; mobility partners</dt><dd>Add a managed intersection study to a larger transportation project.</dd></div>
+          </dl>
+        </div>
+      </section>
+
+      <section id="faq" class="section faq-section" aria-labelledby="faq-title">
         <div class="container faq-layout">
-          <div><p class="eyebrow section-eyebrow">A FEW GREEN LIGHTS</p><h2 id="faq-title">Worth knowing.</h2></div>
+          <div><p class="eyebrow section-eyebrow">BEFORE WE BEGIN</p><h2 id="faq-title">A few practical questions.</h2></div>
           <div class="faq-list">
-            <details><summary>What do we receive, and when?<i data-lucide="plus" aria-hidden="true"></i></summary><p>One week after we install our cameras, you receive your junction analysis and an optimized traffic-light cycle proposal. The report explains observed lane directions, vehicle volumes, and turning movements, alongside the proposed timing plan.</p></details>
-            <details><summary>What does the city need to provide?<i data-lucide="plus" aria-hidden="true"></i></summary><p>No cameras, equipment purchases, or IT integration. We bring and install our cameras, collect the footage, and handle the analysis. Site access and any necessary installation permissions are agreed before we begin.</p></details>
-            <details><summary>How do you keep the service low-cost?<i data-lucide="plus" aria-hidden="true"></i></summary><p>We bring our own cameras and handle the study as one service. Your city does not need to buy equipment or undertake an IT integration project to receive the analysis. We scope the service around the junction you want to understand.</p></details>
-            <details><summary>Does ramzor automatically change the lights?<i data-lucide="plus" aria-hidden="true"></i></summary><p>We deliver the analysis and a proposed optimized traffic-light cycle. Applying it to a live junction is subject to the city's approval and controller requirements. The service is not an automatic signal-control system.</p></details>
+            <details><summary>Does one week include the report?<i data-lucide="plus" aria-hidden="true"></i></summary><p>One week refers to the observation period. Analysis and the signal-timing proposal follow. We agree the observation schedule and report delivery date with you before installation.</p></details>
+            <details><summary>What does the city need to do?<i data-lucide="plus" aria-hidden="true"></i></summary><p>Choose the intersection and provide site access and the necessary approvals. We handle the cameras, traffic observation, analysis, timing proposal, and agreed signal changes. No equipment purchase or IT integration is needed.</p></details>
+            <details><summary>Will Ramzor change the traffic lights?<i data-lucide="plus" aria-hidden="true"></i></summary><p>We can arrange and set the new signal cycle once your team approves the proposal, subject to the agreed scope and controller requirements. Nothing changes automatically or without city approval.</p></details>
+            <details><summary>Can you measure queues at any intersection?<i data-lucide="plus" aria-hidden="true"></i></summary><p>Camera position, obstructions, and the visible length of each lane matter. We review the site and measurement limits before agreeing what the study can cover.</p></details>
+            <details><summary>Do you store video?<i data-lucide="plus" aria-hidden="true"></i></summary><p>No. Video is processed without being recorded or stored. Only numerical traffic measurements are retained from the study. Ramzor operates in compliance with GDPR.</p></details>
           </div>
         </div>
       </section>
 
-      <section id="contact" class="contact-section">
+      <section id="contact" class="contact-section" aria-labelledby="pilot-cta-title">
         <div class="contact-road" aria-hidden="true"></div>
-        <div class="container contact-inner"><div><p class="eyebrow">LOW COST. NO CITY-SIDE SETUP.</p><h2>Your junction.<br>We'll handle the rest.</h2><p>We install our cameras. One week later, you get the analysis and a new cycle proposal.</p></div><a class="button button-dark" href="mailto:hello@ramzor.io" data-contact>Discuss your junction <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="container contact-inner"><div><p class="eyebrow">YOUR FIRST STUDY</p><h2 id="pilot-cta-title">Start with one intersection.</h2><p>Tell us which junction you want to understand.</p></div><a class="button button-dark" href="mailto:hello@ramzor.io" data-contact>Evaluate an intersection <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="container footer-top"><a class="brand" href="#" aria-label="ramzor.io home"><img src="assets/ramzor-logo.png" alt="" width="80" height="44"><span>ramzor<span class="brand-suffix">.io</span></span></a><p>Our cameras. Our setup.<br>Your traffic insight.</p><a class="text-link footer-email" href="mailto:hello@ramzor.io" data-contact-email>hello@ramzor.io <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
-      <div class="container footer-bottom"><span>&copy; <span id="copyright-year">2026</span> ramzor.io</span><span>Better timing starts with real traffic.</span><button class="plain-button" type="button" data-privacy hidden>Privacy</button></div>
+      <div class="container footer-top"><a class="brand" href="#" aria-label="ramzor.io home"><img src="assets/ramzor-logo.png" alt="" width="80" height="44"><span>ramzor<span class="brand-suffix">.io</span></span></a><p>Temporary cameras.<br>Practical traffic analysis.</p><a class="text-link footer-email" href="mailto:hello@ramzor.io" data-contact-email>hello@ramzor.io <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+      <div class="container footer-bottom"><span>&copy; <span id="copyright-year">2026</span> ramzor.io</span><span>Better timing starts with observed traffic.</span><button class="plain-button" type="button" data-privacy hidden>Website privacy</button></div>
     </footer>
 
     <dialog id="contact-dialog" class="contact-dialog" aria-labelledby="contact-title">
       <button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close contact form" title="Close"><i data-lucide="x" aria-hidden="true"></i></button>
-      <p class="eyebrow"><span class="signal-dot"></span> A GOOD PLACE TO START</p>
-      <h2 id="contact-title">Let's talk traffic.</h2>
-      <p class="dialog-intro">Tell us which junction you want to understand. We'll bring the cameras and handle the study.</p>
+      <p class="eyebrow"><span class="signal-dot"></span> ONE INTERSECTION</p>
+      <h2 id="contact-title">Evaluate an intersection.</h2>
+      <p class="dialog-intro">Tell us what you want to understand.</p>
       <form id="contact-form">
-        <div class="form-row"><label>Your name<input name="name" autocomplete="name" placeholder="Alex Morgan" required maxlength="80"></label><label>Work email<input name="email" type="email" autocomplete="email" placeholder="alex@yourteam.com" required maxlength="160"></label></div>
-        <label>Organization<input name="organization" autocomplete="organization" placeholder="Your city, company, or team" required maxlength="120"></label>
-        <label>What's on your mind?<select name="interest"><option>A one-week junction study</option><option>Optimizing a signal cycle</option><option>Partnership opportunity</option><option>Something else</option></select></label>
-        <label>A little context <span class="optional">(optional)</span><textarea name="message" rows="3" maxlength="1200" placeholder="Your junction, its location, and the traffic challenge you want to solve."></textarea></label>
-        <button class="button button-green form-submit" type="submit">Prepare email <i data-lucide="arrow-up-right" aria-hidden="true"></i></button>
-        <p class="form-note">An email draft, not a mailing list. Nothing is submitted to a server.</p>
+        <div class="form-row"><label>Name<input name="name" autocomplete="name" required maxlength="80"></label><label>Work email<input name="email" type="email" autocomplete="email" required maxlength="160"></label></div>
+        <div class="form-row"><label>Organization<input name="organization" autocomplete="organization" required maxlength="120"></label><label>City <span class="optional">(optional)</span><input name="city" autocomplete="address-level2" maxlength="100"></label></div>
+        <label>What are you trying to understand or improve? <span class="optional">(optional)</span><textarea name="message" rows="3" maxlength="1000"></textarea></label>
+        <button class="button button-green form-submit" type="submit">Prepare inquiry <i data-lucide="arrow-up-right" aria-hidden="true"></i></button>
+        <p class="form-note">This prepares an email draft. Nothing is sent or stored by this website.</p>
       </form>
-      <div id="contact-ready" class="contact-ready" hidden><div class="ready-icon"><i data-lucide="mail" aria-hidden="true"></i></div><h3 tabindex="-1">Your introduction is ready.</h3><p>Your email draft is prepared. No message has been sent.</p><a id="email-draft" class="button button-green" href="mailto:hello@ramzor.io">Open email draft <i data-lucide="arrow-up-right" aria-hidden="true"></i></a><button id="edit-inquiry" class="plain-button" type="button">Back to your details</button></div>
+      <div id="contact-ready" class="contact-ready" hidden><div class="ready-icon"><i data-lucide="mail" aria-hidden="true"></i></div><h3 tabindex="-1">Your inquiry is ready.</h3><p>No message has been sent. Open the draft in your email app to review and send it.</p><a id="email-draft" class="button button-green" href="mailto:hello@ramzor.io">Open email draft <i data-lucide="arrow-up-right" aria-hidden="true"></i></a><button id="edit-inquiry" class="plain-button" type="button">Back to your details</button><p class="email-fallback">You can also write directly to <a href="mailto:hello@ramzor.io">hello@ramzor.io</a>.</p></div>
     </dialog>
 
     <dialog id="privacy-dialog" class="privacy-dialog" aria-labelledby="privacy-title"><button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close privacy note" title="Close"><i data-lucide="x" aria-hidden="true"></i></button><p class="eyebrow">KEEPING THINGS CLEAR</p><h2 id="privacy-title">A note on privacy.</h2><p>This page uses no analytics, tracking cookies, or embedded third-party services.</p><p>Contact details stay in this page until you choose to open an email draft. Sending that draft shares those details with the recipient through your email provider. No inquiry is submitted by this website.</p><p>Please leave camera footage and sensitive information out of an initial email.</p></dialog>

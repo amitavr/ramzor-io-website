@@ -177,6 +177,7 @@ html:not(.js) .observation-toolbar { min-height: 48px; }
 .about-section { background: #f8faf7; }
 .about-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 100px; align-items: start; }
 .about-intro > p:not(.eyebrow) { max-width: 570px; margin-top: 20px; color: var(--muted); font-size: 14px; line-height: 1.85; }
+.founder-team { display: grid; gap: 20px; }
 .founder-card { border: 1px solid var(--line); background: #fff; padding: 32px; box-shadow: 0 18px 50px rgba(19, 34, 24, .06); }
 .founder-heading { display: flex; align-items: center; gap: 18px; margin: 20px 0; }
 .founder-monogram { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; background: var(--green-dark); color: var(--lime); font-family: var(--display); font-size: 17px; font-weight: 700; }

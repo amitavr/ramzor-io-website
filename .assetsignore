@@ -1,0 +1,9 @@
+_worker.js
+wrangler.jsonc
+.assetsignore
+.dev.vars*
+.gitignore
+.git/**
+.github/**
+docs/**
+

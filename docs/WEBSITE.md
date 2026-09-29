@@ -61,7 +61,9 @@ private material out of the publishing branch. For another static host, publish
 relative layout.
 
 The contact form validates details and submits them to the Cloudflare Worker
-route at `/api/contact`. The worker validates the request, rejects a hidden
+route at `/api/contact`. The checked-in `wrangler.jsonc` runs the Worker before
+static assets for `/api/*`; `.assetsignore` keeps server/configuration files out
+of the public asset bundle. The Worker validates the request, rejects a hidden
 spam-trap field, and sends the inquiry through Resend to `contact@ramzor.io`.
 Provider credentials remain in encrypted Cloudflare variables and are never
 sent to the browser. A visible email address remains available as a fallback.

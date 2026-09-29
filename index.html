@@ -92,11 +92,6 @@
           </div>
           <div class="observation-toolbar">
             <span class="technical-label demo-label">ILLUSTRATIVE EXAMPLE</span>
-            <div class="driving-side-control" role="group" aria-label="Driving side">
-              <span>Traffic side</span>
-              <button type="button" aria-pressed="true" data-driving-side="left">Drive left</button>
-              <button type="button" aria-pressed="false" data-driving-side="right">Drive right</button>
-            </div>
             <div class="observation-tabs" role="tablist" aria-label="Observation layer">
               <button id="tab-movements" type="button" role="tab" aria-selected="true" aria-controls="panel-movements" data-observation="movements"><i data-lucide="route" aria-hidden="true"></i> Movements</button>
               <button id="tab-queues" type="button" role="tab" aria-selected="false" aria-controls="panel-queues" tabindex="-1" data-observation="queues"><i data-lucide="rows-3" aria-hidden="true"></i> Queues</button>
@@ -106,12 +101,12 @@
           <div class="observation-layout">
             <figure class="observation-figure">
               <!-- TODO(content): Replace the illustration with approved footage and calibrated overlays. See README.md. -->
-              <div class="observation-media" data-study-source="demo" data-layer="movements" data-driving-side="left">
+              <div class="observation-media" data-study-source="demo" data-layer="movements">
                 <div id="intersection-scene" class="intersection-scene" role="img" aria-label="Illustrative intersection with roads, signals, and vehicles. Not recorded traffic."></div>
                 <video id="study-video" controls playsinline preload="none" aria-label="Intersection study footage" hidden></video>
                 <img id="study-image" alt="" hidden>
                 <svg id="footage-overlay" viewBox="0 0 1183 918" preserveAspectRatio="xMidYMid meet" aria-hidden="true" hidden></svg>
-                <span class="scene-reference" aria-hidden="true">RAMZOR.IO / FIELD STUDY</span>
+                <span class="scene-reference" aria-hidden="true">RAMZOR / FIELD STUDY</span>
               </div>
               <figcaption>
                 <span id="scene-caption">Illustrative animation. Not a real deployment.</span>
@@ -162,7 +157,7 @@
             <a class="text-link" href="#how-it-works">From installation to proposal <i data-lucide="arrow-down" aria-hidden="true"></i></a>
           </div>
           <article class="report-sheet" aria-labelledby="report-title">
-            <div class="report-header"><span class="technical-label">RAMZOR.IO / FIELD REPORT</span><span class="signal-trio" aria-hidden="true"><span></span><span></span><span></span></span></div>
+            <div class="report-header"><span class="technical-label">RAMZOR / FIELD REPORT</span><span class="signal-trio" aria-hidden="true"><span></span><span></span><span></span></span></div>
             <h3 id="report-title">Intersection study</h3>
             <p class="report-subtitle">Sample report contents, not a completed study.</p>
             <ol class="report-contents">
@@ -241,7 +236,7 @@
       <section id="about" class="section about-section" aria-labelledby="about-title">
         <div class="container about-layout">
           <div class="about-intro">
-            <p class="eyebrow section-eyebrow"><span>05</span> ABOUT RAMZOR.IO</p>
+            <p class="eyebrow section-eyebrow"><span>05</span> ABOUT RAMZOR</p>
             <h2 id="about-title">Building practical tools<br>for better signal timing.</h2>
             <p>ramzor.io is an early-stage traffic-technology company building computer-vision and data-analysis tools that help municipalities understand real-world traffic behavior and make better-informed signal-timing decisions.</p>
             <p>We operate on site with municipalities and mobility partners, bringing our own camera equipment to selected intersections and delivering the analysis directly to the teams responsible for them.</p>
@@ -281,11 +276,6 @@
 
     <dialog id="contact-dialog" class="contact-dialog" aria-labelledby="contact-title">
       <button class="icon-button dialog-close" type="button" data-close-dialog aria-label="Close contact form" title="Close"><i data-lucide="x" aria-hidden="true"></i></button>
-      <div class="uk-dialog-illustration" role="img" aria-label="Illustrative UK junction with left-side traffic, a London clock tower, and Union Jack colours">
-        <div class="uk-sky"><span class="uk-sun"></span><span class="uk-tower"><i></i></span><span class="uk-building building-one"></span><span class="uk-building building-two"></span></div>
-        <div class="uk-road"><span class="uk-road-line"></span><span class="uk-car car-near"></span><span class="uk-car car-far"></span><span class="uk-direction">KEEP LEFT</span></div>
-        <div class="uk-badge"><span aria-hidden="true">🇬🇧</span> UK PILOT · LEFT-SIDE TRAFFIC</div>
-      </div>
       <p class="eyebrow"><span class="signal-dot"></span> YOUR JUNCTION</p>
       <h2 id="contact-title">Let us investigate your junction.</h2>
       <p class="dialog-intro">Tell us which intersection you want to understand. We bring the cameras, run the study, and review the findings with you.</p>

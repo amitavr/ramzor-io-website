@@ -133,15 +133,6 @@ document.getElementById("edit-inquiry").addEventListener("click", () => {
 
 const observationTabs = [...document.querySelectorAll("[data-observation]")];
 const observationMedia = document.querySelector(".observation-media");
-const drivingSideButtons = [...document.querySelectorAll("[data-driving-side]")];
-drivingSideButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const side = button.dataset.drivingSide;
-    observationMedia.dataset.drivingSide = side;
-    drivingSideButtons.forEach((candidate) => candidate.setAttribute("aria-pressed", String(candidate === button)));
-    observationMedia.dispatchEvent(new CustomEvent("drivingsidechange", { detail: { side } }));
-  });
-});
 function selectObservation(tab) {
   observationTabs.forEach((candidate) => {
     const selected = candidate === tab;
@@ -375,10 +366,10 @@ function createIntersection({ isHero = false } = {}) {
   const queueEndProgress = stopLineProgress + .5;
   const movementExitProgress = loopLength - queueEndProgress;
   const lanes = [
-    { axis: "z", baseOffset: -1.85, offset: -1.85, direction: 1, phase: "north" },
-    { axis: "z", baseOffset: 1.85, offset: 1.85, direction: -1, phase: "north" },
-    { axis: "x", baseOffset: 1.85, offset: 1.85, direction: 1, phase: "east" },
-    { axis: "x", baseOffset: -1.85, offset: -1.85, direction: -1, phase: "east" },
+    { axis: "z", offset: -1.85, direction: 1, phase: "north" },
+    { axis: "z", offset: 1.85, direction: -1, phase: "north" },
+    { axis: "x", offset: 1.85, direction: 1, phase: "east" },
+    { axis: "x", offset: -1.85, direction: -1, phase: "east" },
   ];
   const layers = { movements: new THREE.Group(), queues: new THREE.Group(), counts: new THREE.Group() };
   Object.values(layers).forEach((layer) => world.add(layer));
@@ -402,16 +393,15 @@ function createIntersection({ isHero = false } = {}) {
       queueRegion.position.set(lane.axis === "x" ? position : lane.offset, 0, lane.axis === "z" ? position : lane.offset);
       queueRegion.rotation.y = lane.axis === "z" ? (lane.direction === -1 ? 0 : Math.PI) : -lane.direction * Math.PI / 2;
       layers.queues.add(queueRegion);
-      lane.queueRegion = queueRegion;
       box(3.2, .025, queueLength, 0xf5bd52, [0, .04, 0], queueRegion, { transparent: true, opacity: .38, depthWrite: false });
       box(.15, .025, queueLength, 0xffc15b, [1.75, .1, 0], queueRegion);
       for (const end of [-queueLength / 2, queueLength / 2]) box(.7, .025, .15, 0xffc15b, [1.45, .1, end], queueRegion);
     });
     lanes.forEach((lane) => {
       const gate = (countLineProgress - loopLength / 2) * lane.direction;
-      lane.countGate = box(lane.axis === "z" ? 3.3 : .24, .025, lane.axis === "z" ? .24 : 3.3, 0xa6d76e,
+      box(lane.axis === "z" ? 3.3 : .24, .025, lane.axis === "z" ? .24 : 3.3, 0xa6d76e,
         [lane.axis === "x" ? gate : lane.offset, .1, lane.axis === "z" ? gate : lane.offset], layers.counts);
-      lane.countArea = box(lane.axis === "z" ? 3.2 : 12, .02, lane.axis === "z" ? 12 : 3.2, 0xadd980,
+      box(lane.axis === "z" ? 3.2 : 12, .02, lane.axis === "z" ? 12 : 3.2, 0xadd980,
         [lane.axis === "x" ? -12 * lane.direction : lane.offset, .035, lane.axis === "z" ? -12 * lane.direction : lane.offset],
         layers.counts, { transparent: true, opacity: .2, depthWrite: false });
     });
@@ -431,26 +421,6 @@ function createIntersection({ isHero = false } = {}) {
       return { mesh, trail, progress: progress + laneIndex * .4 };
     });
   });
-  if (!isHero) {
-    function applyDrivingSide(side) {
-      const multiplier = side === "right" ? -1 : 1;
-      lanes.forEach((lane) => {
-        lane.offset = lane.baseOffset * multiplier;
-        if (lane.queueRegion) {
-          const position = ((queueStartProgress + queueEndProgress) / 2 - loopLength / 2) * lane.direction;
-          lane.queueRegion.position.set(lane.axis === "x" ? position : lane.offset, 0, lane.axis === "z" ? position : lane.offset);
-        }
-        if (lane.countGate) {
-          const gate = (countLineProgress - loopLength / 2) * lane.direction;
-          lane.countGate.position.set(lane.axis === "x" ? gate : lane.offset, .1, lane.axis === "z" ? gate : lane.offset);
-          lane.countArea.position.set(lane.axis === "x" ? -12 * lane.direction : lane.offset, .035, lane.axis === "z" ? -12 * lane.direction : lane.offset);
-        }
-      });
-      document.getElementById("scene-caption").textContent = `Illustrative ${side}-side traffic. Not a real deployment.`;
-    }
-    observationMedia.addEventListener("drivingsidechange", (event) => applyDrivingSide(event.detail.side));
-    applyDrivingSide(observationMedia.dataset.drivingSide || "left");
-  }
   let elapsed = 3;
   let observedSeconds = 0;
   let vehicleCrossings = 0;

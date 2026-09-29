@@ -38,7 +38,7 @@ installation permissions are agreed before the one-week study begins.
   links and displayed address in [index.html](../index.html) if needed; the inquiry
    script reads the recipient from the footer link.
 2. **Review the service commitment and privacy note.** Confirm the one-week
-  delivery from installation, ramzor.io's camera-deployment arrangements,
+  delivery from installation, ramzor's camera-deployment arrangements,
   low-cost positioning, and ownership of the optimization service before
   launch. The timeline and commercial positioning come from the team, not an
   independent verification. No price or free service is promised. Queue/wait

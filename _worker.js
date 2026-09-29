@@ -10,7 +10,8 @@ function escapeHtml(value) {
 
 async function handleContact(request, env) {
   if (request.method !== "POST") return reply({ error: "Method not allowed." }, 405);
-  if (!env.RESEND_API_KEY || !env.CONTACT_FROM_EMAIL) return reply({ error: "Contact service is not configured." }, 503);
+  const missingConfiguration = ["RESEND_API_KEY", "CONTACT_FROM_EMAIL"].filter((name) => !env[name]);
+  if (missingConfiguration.length) return reply({ error: "Contact service is not configured.", missing: missingConfiguration }, 503);
   if (Number(request.headers.get("content-length") || 0) > 12_000) return reply({ error: "Request is too large." }, 413);
 
   let input;

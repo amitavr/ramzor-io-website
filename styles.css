@@ -7,7 +7,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 28px; scrollbar-gutter: stab
 body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--font); font-size: 15px; line-height: 1.7; letter-spacing: 0; -webkit-font-smoothing: antialiased; }
 body.modal-open { overflow: hidden; }
 button, input, textarea { font: inherit; letter-spacing: 0; }
-button, a, input, textarea, summary { -webkit-tap-highlight-color: transparent; }
+button, a, input, textarea { -webkit-tap-highlight-color: transparent; }
 button, a { touch-action: manipulation; }
 a { color: inherit; text-decoration: none; }
 button { color: inherit; cursor: pointer; }
@@ -159,11 +159,7 @@ html:not(.js) .observation-toolbar { min-height: 48px; }
 .process-step p { color: #c3d1c1; font-size: 13px; line-height: 1.9; }
 .process-footnote { margin-top: 38px; padding-top: 20px; border-top: 1px solid #57705b; font-size: 11px; color: #c3d1c1; }
 .process-footnote strong { color: #f2f5eb; }
-.audience-layout, .privacy-layout, .faq-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; }
-summary { cursor: pointer; list-style: none; min-height: 60px; padding-block: 20px; display: flex; justify-content: space-between; align-items: center; gap: 20px; font-size: 13px; font-weight: 600; }
-summary::-webkit-details-marker { display: none; }
-summary > svg { width: 18px; height: 18px; color: var(--green); transition: transform .2s; }
-details[open] > summary > svg { transform: rotate(45deg); }
+.audience-layout, .privacy-layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; }
 .privacy-section { padding-block: 54px; background: #edf1ed; border-block: 1px solid var(--line); }
 .privacy-section h2 { font-size: 32px; }
 .privacy-layout > div > p:not(.eyebrow) { color: var(--muted); font-size: 13px; line-height: 1.9; }
@@ -187,10 +183,6 @@ details[open] > summary > svg { transform: rotate(45deg); }
 .founder-card h3 { font-size: 24px; }
 .founder-heading p { margin-top: 4px; color: var(--green); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
 .founder-card > p:last-child { color: var(--muted); font-size: 13px; line-height: 1.85; }
-.faq-section h2 { max-width: 320px; }
-.faq-list details { border-bottom: 1px solid var(--line); }
-.faq-list details:first-child { border-top: 1px solid var(--line); }
-.faq-list details > p { font-size: 13px; line-height: 1.9; color: var(--muted); padding: 0 30px 23px 0; }
 .contact-section { background: var(--lime); padding-block: 76px; position: relative; overflow: hidden; }
 .contact-inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 40px; }
 .contact-inner .eyebrow { margin-bottom: 22px; color: #4b6233; }
@@ -255,7 +247,7 @@ input::placeholder, textarea::placeholder { color: #64705f; opacity: 1; font-siz
   .observation-notes { padding: 24px; }
   .observation-panel { min-height: 290px; }
   .observation-panel h3 { font-size: 22px; }
-  .deliverables-layout, .audience-layout, .privacy-layout, .faq-layout, .about-layout { gap: 60px; }
+  .deliverables-layout, .audience-layout, .privacy-layout, .about-layout { gap: 60px; }
   .report-sheet { padding: 27px; }
   .timing-flow { gap: 28px; }
   .timing-flow h3 { font-size: 21px; }
@@ -303,7 +295,7 @@ input::placeholder, textarea::placeholder { color: #64705f; opacity: 1; font-siz
   .observation-toolbar { gap: 16px; }
   .observation-tabs { gap: 0; }
   .observation-tabs button { padding-inline: 12px; font-size: 11px; }
-  .deliverables-layout, .audience-layout, .privacy-layout, .faq-layout, .about-layout { gap: 40px; }
+  .deliverables-layout, .audience-layout, .privacy-layout, .about-layout { gap: 40px; }
   .deliverables-layout { grid-template-columns: .9fr 1.1fr; }
   .deliverables-intro { padding-top: 0; }
   .report-sheet { padding: 22px; }
@@ -339,7 +331,7 @@ input::placeholder, textarea::placeholder { color: #64705f; opacity: 1; font-siz
   .movement-legend .legend-line { width: 18px; }
   .observation-disclaimer { padding-top: 0; max-width: 450px; }
   .demo-counts { max-width: 420px; }
-  .deliverables-layout, .audience-layout, .privacy-layout, .faq-layout, .about-layout { grid-template-columns: 1fr; gap: 32px; }
+  .deliverables-layout, .audience-layout, .privacy-layout, .about-layout { grid-template-columns: 1fr; gap: 32px; }
   .about-intro > p:not(.eyebrow) { max-width: 620px; }
   .deliverables-intro > p:not(.eyebrow) { max-width: 480px; margin-top: 18px; }
   .deliverables-intro .text-link { margin-top: 16px; }
@@ -413,7 +405,6 @@ input::placeholder, textarea::placeholder { color: #64705f; opacity: 1; font-siz
   .privacy-section h2 { font-size: 28px; }
   .audience-section { padding-bottom: 0; }
   .founder-card { padding: 24px; }
-  .faq-list details > p { padding-right: 15px; }
   .contact-section { padding-block: 48px; }
   .contact-inner { gap: 26px; }
   .contact-inner .eyebrow { font-size: 9px; margin-bottom: 18px; }

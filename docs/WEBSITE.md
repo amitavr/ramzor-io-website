@@ -60,8 +60,8 @@ private material out of the publishing branch. For another static host, publish
 `index.html`, `styles.css`, `site.js`, `.nojekyll`, and `assets/` with the same
 relative layout.
 
-The contact form validates details and submits them to the Cloudflare Pages
-Function at `/api/contact`. The function validates the request, rejects a hidden
+The contact form validates details and submits them to the Cloudflare Worker
+route at `/api/contact`. The worker validates the request, rejects a hidden
 spam-trap field, and sends the inquiry through Resend to `contact@ramzor.io`.
 Provider credentials remain in encrypted Cloudflare variables and are never
 sent to the browser. A visible email address remains available as a fallback.
@@ -71,14 +71,14 @@ sent to the browser. A visible email address remains available as a fallback.
 - [index.html](../index.html): content, navigation, sections, and dialogs.
 - [styles.css](../styles.css): responsive layouts, local fonts, and brand palette.
 - [site.js](../site.js): menu, accessible tabs/dialogs, form submission, and 3D scene.
-- [functions/api/contact.js](../functions/api/contact.js): validates inquiries and
-  sends them through the server-side email provider.
+- [_worker.js](../_worker.js): serves the static site and validates inquiries
+  before sending them through the server-side email provider.
 - [.nojekyll](../.nojekyll): serve the root site without Jekyll processing.
 - [assets/README.md](../assets/README.md): asset sources, pinned dependencies, and
   their bundled licenses.
 
 There are no analytics or tracking cookies. The only runtime service request is
-the visitor-initiated contact submission to the same-origin Pages Function,
+the visitor-initiated contact submission to the same-origin Worker route,
 which calls the configured email provider. Native anchors and email links remain
 usable without JavaScript. Animation pauses outside the viewport and in
 background tabs; reduced-motion preferences start the scene paused.

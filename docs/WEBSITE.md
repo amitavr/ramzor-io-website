@@ -33,7 +33,7 @@ installation permissions are agreed before the one-week study begins.
 
 ## Before Publishing
 
-1. **Confirm the contact address.** The initial address is `hello@ramzor.io`.
+1. **Confirm the contact address.** The public address is `contact@ramzor.io`.
    Its mailbox and domain ownership have not been verified. Update the mailto
   links and displayed address in [index.html](../index.html) if needed; the inquiry
    script reads the recipient from the footer link.

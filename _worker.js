@@ -16,6 +16,7 @@ async function handleContact(request, env) {
 
   let input;
   try { input = await request.json(); } catch { return reply({ error: "Invalid request." }, 400); }
+  if (!input || typeof input !== "object" || Array.isArray(input)) return reply({ error: "Invalid request." }, 400);
   if (clean(input.website, 200)) return reply({ ok: true });
 
   const name = clean(input.name, 80);
@@ -32,18 +33,28 @@ async function handleContact(request, env) {
     name: escapeHtml(name), email: escapeHtml(email), organization: escapeHtml(organization),
     city: escapeHtml(city || "Not provided"), message: escapeHtml(message || "Not provided").replace(/\n/g, "<br>"),
   };
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: env.CONTACT_FROM_EMAIL,
-      to: [env.CONTACT_TO_EMAIL || "contact@ramzor.io"],
-      reply_to: email,
-      subject: `Junction inquiry${city ? ` — ${city}` : ""}`,
-      text: ["New ramzor.io website inquiry", "", `Name: ${name}`, `Email: ${email}`, `Organization: ${organization}`, `City: ${city || "Not provided"}`, "", "Message:", message || "Not provided"].join("\n"),
-      html: `<h2>New ramzor.io website inquiry</h2><p><strong>Name:</strong> ${safe.name}<br><strong>Email:</strong> ${safe.email}<br><strong>Organization:</strong> ${safe.organization}<br><strong>City:</strong> ${safe.city}</p><p><strong>What they want to understand or improve:</strong><br>${safe.message}</p>`,
-    }),
-  });
+  const controller = new AbortController();
+  const deliveryTimeout = setTimeout(() => controller.abort(), 15_000);
+  let response;
+  try {
+    response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      signal: controller.signal,
+      body: JSON.stringify({
+        from: env.CONTACT_FROM_EMAIL,
+        to: [env.CONTACT_TO_EMAIL || "contact@ramzor.io"],
+        reply_to: email,
+        subject: `Junction inquiry${city ? ` — ${city}` : ""}`,
+        text: ["New ramzor.io website inquiry", "", `Name: ${name}`, `Email: ${email}`, `Organization: ${organization}`, `City: ${city || "Not provided"}`, "", "Message:", message || "Not provided"].join("\n"),
+        html: `<h2>New ramzor.io website inquiry</h2><p><strong>Name:</strong> ${safe.name}<br><strong>Email:</strong> ${safe.email}<br><strong>Organization:</strong> ${safe.organization}<br><strong>City:</strong> ${safe.city}</p><p><strong>What they want to understand or improve:</strong><br>${safe.message}</p>`,
+      }),
+    });
+  } catch {
+    return reply({ error: "Email delivery failed." }, 502);
+  } finally {
+    clearTimeout(deliveryTimeout);
+  }
   if (!response.ok) return reply({ error: "Email delivery failed." }, 502);
   return reply({ ok: true });
 }

@@ -46,10 +46,15 @@ function markContactPromptSeen() {
   try { sessionStorage.setItem(contactPromptKey, "true"); } catch { /* Keep the in-memory state. */ }
 }
 
-function openContactDialog(opener = menuButton) {
+function openContactDialog(opener = document.activeElement) {
   if (contactDialog.open || document.querySelector("dialog[open]")) return;
   markContactPromptSeen();
   dialogOpeners.set(contactDialog, opener);
+  const startedAtField = contactForm.elements.namedItem("startedAt");
+  const formAge = Date.now() - Number(startedAtField.value);
+  if (!formSubmit.disabled && (!Number.isFinite(formAge) || formAge >= 7_200_000)) {
+    startedAtField.value = String(Date.now());
+  }
   contactDialog.showModal();
   document.body.classList.add("modal-open");
 }
@@ -90,8 +95,10 @@ document.querySelectorAll("dialog").forEach((dialog) => {
   dialog.addEventListener("close", () => {
     document.body.classList.remove("modal-open");
     const opener = dialogOpeners.get(dialog);
-    const focusTarget = opener && opener.getClientRects().length ? opener : menuButton;
-    focusTarget.focus();
+    const focusTarget = [opener, menuButton, document.querySelector(".nav-contact"), document.querySelector(".brand")]
+      .find((candidate) => candidate && candidate !== document.body && candidate !== document.documentElement
+        && candidate.isConnected && candidate.getClientRects().length && !candidate.disabled);
+    focusTarget?.focus({ preventScroll: true });
   });
   dialog.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
@@ -112,26 +119,34 @@ const formSubmit = contactForm.querySelector('[type="submit"]');
 contactForm.elements.namedItem("startedAt").value = String(Date.now());
 contactForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (!contactForm.reportValidity()) return;
+  if (formSubmit.disabled || !contactForm.reportValidity()) return;
   formSubmit.disabled = true;
   formStatus.classList.remove("is-error");
   formStatus.textContent = "Sending your inquiry…";
+  const controller = new AbortController();
+  const requestTimeout = window.setTimeout(() => controller.abort(), 20_000);
   try {
     const response = await fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(Object.fromEntries(new FormData(contactForm))),
+      signal: controller.signal,
     });
     if (!response.ok) throw new Error("Submission failed");
+    const result = await response.json();
+    if (result?.ok !== true) throw new Error("Delivery was not confirmed");
     contactForm.reset();
     contactForm.elements.namedItem("startedAt").value = String(Date.now());
     contactForm.hidden = true;
     contactReady.hidden = false;
     contactReady.querySelector("h3").focus();
-  } catch {
+  } catch (error) {
     formStatus.classList.add("is-error");
-    formStatus.textContent = "We couldn't send your inquiry. Please email contact@ramzor.io directly.";
+    formStatus.textContent = error.name === "AbortError"
+      ? "We couldn't confirm delivery in time. Please try again or email contact@ramzor.io directly."
+      : "We couldn't send your inquiry. Please try again or email contact@ramzor.io directly.";
   } finally {
+    window.clearTimeout(requestTimeout);
     formSubmit.disabled = false;
   }
 });
@@ -500,19 +515,31 @@ function createIntersection({ isHero = false } = {}) {
   let inView = false;
   let frameHandle = 0;
   let previousTime = 0;
-  function render() { renderer.render(scene, camera); }
+  let renderingFailed = false;
+  function render() {
+    if (renderingFailed) return false;
+    try {
+      renderer.render(scene, camera);
+      return true;
+    } catch {
+      renderingFailed = true;
+      setPaused(true);
+      showFallback();
+      return false;
+    }
+  }
   function animate(timestamp) {
     frameHandle = 0;
-    if (paused || !inView || document.hidden) return;
+    if (renderingFailed || paused || !inView || document.hidden) return;
     const delta = previousTime ? Math.min((timestamp - previousTime) / 1000, .05) : 0;
     previousTime = timestamp;
     updateTraffic(delta);
-    render();
+    if (!render()) return;
     frameHandle = requestAnimationFrame(animate);
   }
   function resumeRendering() {
     previousTime = 0;
-    if (!frameHandle && !paused && inView && !document.hidden) frameHandle = requestAnimationFrame(animate);
+    if (!renderingFailed && !frameHandle && !paused && inView && !document.hidden) frameHandle = requestAnimationFrame(animate);
   }
   function setPaused(value) {
     paused = value;
@@ -529,6 +556,7 @@ function createIntersection({ isHero = false } = {}) {
     resumeRendering();
   }
   function resize() {
+    if (renderingFailed) return;
     const width = host.clientWidth;
     const height = host.clientHeight;
     if (!width || !height) return;
@@ -543,6 +571,7 @@ function createIntersection({ isHero = false } = {}) {
     render();
   }
   function updateLayer() {
+    if (renderingFailed) return;
     const selected = isHero ? "none" : observationMedia.dataset.layer;
     Object.entries(layers).forEach(([name, layer]) => { layer.visible = name === selected; });
     const descriptions = {
@@ -565,11 +594,15 @@ function createIntersection({ isHero = false } = {}) {
   sceneToggle.addEventListener("click", () => setPaused(!paused));
   renderer.domElement.addEventListener("webglcontextlost", (event) => {
     event.preventDefault();
+    renderingFailed = true;
     setPaused(true);
     showFallback();
   });
   renderer.domElement.addEventListener("webglcontextrestored", () => {
+    renderingFailed = false;
     resize();
+    updateLayer();
+    if (renderingFailed) return;
     host.classList.add("scene-ready");
     sceneToggle.hidden = false;
     if (isHero) {
@@ -579,13 +612,13 @@ function createIntersection({ isHero = false } = {}) {
       document.querySelector(".observation-tabs").hidden = false;
       document.getElementById("scene-caption").textContent = "Illustrative animation. Not a real deployment.";
     }
-    updateLayer();
     setPaused(reducedMotion.matches);
   });
   updateTraffic(0);
   if (!isHero) setDemoMetricsVisible(true);
   resize();
   updateLayer();
+  if (renderingFailed) return;
   sceneToggle.hidden = false;
   host.classList.add("scene-ready");
   setPaused(paused);
